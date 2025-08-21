@@ -27,9 +27,10 @@ async function getUserTitlesAndBadges() {
       .from('user_badges')
       .select(`
         author_key,
+        badge_id,
         earned_at,
         earned_condition,
-        badge_definitions (
+        badge_definitions!inner (
           id,
           name,
           description,
@@ -55,12 +56,18 @@ async function getUserTitlesAndBadges() {
       if (!badgeMap.has(authorKey)) {
         badgeMap.set(authorKey, []);
       }
+      
+      console.log('Processing badge for', authorKey, ':', {
+        badgeId: badge.badge_id,
+        badgeDefinitions: badge.badge_definitions
+      });
+      
       badgeMap.get(authorKey).push({
-        id: (badge.badge_definitions as any)[0]?.id,
-        name: (badge.badge_definitions as any)[0]?.name,
-        description: (badge.badge_definitions as any)[0]?.description,
-        iconUrl: (badge.badge_definitions as any)[0]?.icon_url,
-        rarity: (badge.badge_definitions as any)[0]?.rarity,
+        id: (badge.badge_definitions as any)?.id,
+        name: (badge.badge_definitions as any)?.name,
+        description: (badge.badge_definitions as any)?.description,
+        iconUrl: (badge.badge_definitions as any)?.icon_url,
+        rarity: (badge.badge_definitions as any)?.rarity,
         earnedAt: badge.earned_at,
         earnedCondition: badge.earned_condition
       });
