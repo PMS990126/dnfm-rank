@@ -34,22 +34,35 @@ export default function Badge({ badge }: BadgeProps) {
       >
         {/* 뱃지 이미지 또는 첫 글자 */}
         {badge.iconUrl ? (
-          <div
-            className="w-6 h-6 rounded-full bg-center bg-cover bg-no-repeat"
-            style={{
-              backgroundImage: `url('${badge.iconUrl}')`
-            }}
-            title={`뱃지 이미지: ${badge.iconUrl}`}
-          >
-            {/* 폴백 텍스트 (이미지 로드 실패시 보임) */}
-            <div className="w-full h-full rounded-full flex items-center justify-center text-xs font-bold opacity-0 hover:opacity-100 transition-opacity bg-white bg-opacity-90">
-              {badge.name?.charAt(0) || '?'}
+          <>
+            {/* 디버깅용 로그 */}
+            {console.log('뱃지 렌더링:', { 
+              badgeName: badge.name, 
+              iconUrl: badge.iconUrl, 
+              hasIconUrl: !!badge.iconUrl,
+              iconUrlType: typeof badge.iconUrl 
+            })}
+            <div
+              className="w-6 h-6 rounded-full bg-center bg-cover bg-no-repeat border border-red-300"
+              style={{
+                backgroundImage: `url("${badge.iconUrl}")`,
+                backgroundColor: '#f0f0f0' // 배경색 추가로 로드 상태 확인
+              }}
+              title={`뱃지 이미지: ${badge.iconUrl}`}
+            >
+              {/* 폴백 텍스트 (이미지 로드 실패시 보임) */}
+              <div className="w-full h-full rounded-full flex items-center justify-center text-xs font-bold bg-white bg-opacity-50">
+                {badge.name?.charAt(0) || '?'}
+              </div>
             </div>
-          </div>
+          </>
         ) : (
-          <span className={`text-xs font-bold ${rarityTextColors[badge.rarity]}`}>
-            {badge.name?.charAt(0) || '?'}
-          </span>
+          <>
+            {console.log('뱃지 iconUrl 없음:', { badgeName: badge.name, iconUrl: badge.iconUrl })}
+            <span className={`text-xs font-bold ${rarityTextColors[badge.rarity]}`}>
+              {badge.name?.charAt(0) || '?'}
+            </span>
+          </>
         )}
       </div>
       
