@@ -1,47 +1,20 @@
 {
   "pages": {
-    "/_not-found/page": [
-      "static/chunks/webpack-c8441f2d519541e3.js",
-      "static/chunks/fd9d1056-749e5812300142af.js",
-      "static/chunks/117-a36f2828abda37f3.js",
-      "static/chunks/main-app-37e0e90e613c5f06.js",
-      "static/chunks/app/_not-found/page-eaa53ae320539b27.js"
+    "/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/page.js"
     ],
     "/layout": [
-      "static/chunks/webpack-c8441f2d519541e3.js",
-      "static/chunks/fd9d1056-749e5812300142af.js",
-      "static/chunks/117-a36f2828abda37f3.js",
-      "static/chunks/main-app-37e0e90e613c5f06.js",
-      "static/css/39d0fb4c52f8c23c.css",
-      "static/chunks/app/layout-1d5c989e64b98652.js"
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/css/app/layout.css",
+      "static/chunks/app/layout.js"
     ],
-    "/guild/[guild]/ranking/page": [
-      "static/chunks/webpack-c8441f2d519541e3.js",
-      "static/chunks/fd9d1056-749e5812300142af.js",
-      "static/chunks/117-a36f2828abda37f3.js",
-      "static/chunks/main-app-37e0e90e613c5f06.js",
-      "static/chunks/app/guild/[guild]/ranking/page-7d1e978aa676865a.js"
-    ],
-    "/post/[postId]/page": [
-      "static/chunks/webpack-c8441f2d519541e3.js",
-      "static/chunks/fd9d1056-749e5812300142af.js",
-      "static/chunks/117-a36f2828abda37f3.js",
-      "static/chunks/main-app-37e0e90e613c5f06.js",
-      "static/chunks/app/post/[postId]/page-5656cb97bcb64b85.js"
-    ],
-    "/page": [
-      "static/chunks/webpack-c8441f2d519541e3.js",
-      "static/chunks/fd9d1056-749e5812300142af.js",
-      "static/chunks/117-a36f2828abda37f3.js",
-      "static/chunks/main-app-37e0e90e613c5f06.js",
-      "static/chunks/app/page-72807c4019021683.js"
-    ],
-    "/user/[nickname]/page": [
-      "static/chunks/webpack-c8441f2d519541e3.js",
-      "static/chunks/fd9d1056-749e5812300142af.js",
-      "static/chunks/117-a36f2828abda37f3.js",
-      "static/chunks/main-app-37e0e90e613c5f06.js",
-      "static/chunks/app/user/[nickname]/page-29659f54e86e52e8.js"
+    "/_not-found/page": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/_not-found/page.js"
     ]
   }
 }
