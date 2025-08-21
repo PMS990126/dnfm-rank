@@ -56,11 +56,11 @@ async function getUserTitlesAndBadges() {
         badgeMap.set(authorKey, []);
       }
       badgeMap.get(authorKey).push({
-        id: badge.badge_definitions.id,
-        name: badge.badge_definitions.name,
-        description: badge.badge_definitions.description,
-        iconUrl: badge.badge_definitions.icon_url,
-        rarity: badge.badge_definitions.rarity,
+        id: (badge.badge_definitions as any)[0]?.id,
+        name: (badge.badge_definitions as any)[0]?.name,
+        description: (badge.badge_definitions as any)[0]?.description,
+        iconUrl: (badge.badge_definitions as any)[0]?.icon_url,
+        rarity: (badge.badge_definitions as any)[0]?.rarity,
         earnedAt: badge.earned_at,
         earnedCondition: badge.earned_condition
       });

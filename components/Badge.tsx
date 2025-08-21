@@ -45,7 +45,7 @@ export default function Badge({ badge }: BadgeProps) {
               target.style.display = 'none';
               const parent = target.parentElement;
               if (parent) {
-                parent.innerHTML = `<span class="text-xs font-bold ${rarityTextColors[badge.rarity]}">${badge.name.charAt(0)}</span>`;
+                parent.innerHTML = `<span class="text-xs font-bold ${rarityTextColors[badge.rarity]}">${badge.name?.charAt(0) || '?'}</span>`;
               }
             }}
             onLoad={() => {
@@ -54,7 +54,7 @@ export default function Badge({ badge }: BadgeProps) {
           />
         ) : (
           <span className={`text-xs font-bold ${rarityTextColors[badge.rarity]}`}>
-            {badge.name.charAt(0)}
+            {badge.name?.charAt(0) || '?'}
           </span>
         )}
       </div>

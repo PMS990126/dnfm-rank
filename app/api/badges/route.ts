@@ -1,6 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 
+// 타입 정의
+interface BadgeDefinition {
+  id: any;
+  name: any;
+  description: any;
+  icon_url: any;
+  rarity: any;
+}
+
+interface UserBadgeItem {
+  badge_id: any;
+  earned_at: any;
+  earned_condition: any;
+  badge_definitions: BadgeDefinition[];
+}
+
 // 뱃지 조회
 export async function GET(request: NextRequest) {
   try {
@@ -29,12 +45,12 @@ export async function GET(request: NextRequest) {
       
       if (error) throw error;
       
-      const badges = data?.map(item => ({
-        id: item.badge_definitions.id,
-        name: item.badge_definitions.name,
-        description: item.badge_definitions.description,
-        iconUrl: item.badge_definitions.icon_url,
-        rarity: item.badge_definitions.rarity,
+      const badges = (data as UserBadgeItem[])?.map(item => ({
+        id: item.badge_definitions[0]?.id,
+        name: item.badge_definitions[0]?.name,
+        description: item.badge_definitions[0]?.description,
+        iconUrl: item.badge_definitions[0]?.icon_url,
+        rarity: item.badge_definitions[0]?.rarity,
         earnedAt: item.earned_at,
         earnedCondition: item.earned_condition
       })) || [];
