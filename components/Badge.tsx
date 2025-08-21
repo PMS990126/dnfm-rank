@@ -34,24 +34,18 @@ export default function Badge({ badge }: BadgeProps) {
       >
         {/* 뱃지 이미지 또는 첫 글자 */}
         {badge.iconUrl ? (
-          <img 
-            src={badge.iconUrl} 
-            alt={badge.name}
-            className="w-6 h-6 object-cover rounded-full"
-            onError={(e) => {
-              // 이미지 로드 실패시 첫 글자로 대체
-              console.log('뱃지 이미지 로드 실패:', badge.iconUrl, 'Current URL:', window.location.origin);
-              const target = e.target as HTMLImageElement;
-              target.style.display = 'none';
-              const parent = target.parentElement;
-              if (parent) {
-                parent.innerHTML = `<span class="text-xs font-bold ${rarityTextColors[badge.rarity]}">${badge.name?.charAt(0) || '?'}</span>`;
-              }
+          <div
+            className="w-6 h-6 rounded-full bg-center bg-cover bg-no-repeat"
+            style={{
+              backgroundImage: `url('${badge.iconUrl}')`
             }}
-            onLoad={() => {
-              console.log('뱃지 이미지 로드 성공:', badge.iconUrl);
-            }}
-          />
+            title={`뱃지 이미지: ${badge.iconUrl}`}
+          >
+            {/* 폴백 텍스트 (이미지 로드 실패시 보임) */}
+            <div className="w-full h-full rounded-full flex items-center justify-center text-xs font-bold opacity-0 hover:opacity-100 transition-opacity bg-white bg-opacity-90">
+              {badge.name?.charAt(0) || '?'}
+            </div>
+          </div>
         ) : (
           <span className={`text-xs font-bold ${rarityTextColors[badge.rarity]}`}>
             {badge.name?.charAt(0) || '?'}
