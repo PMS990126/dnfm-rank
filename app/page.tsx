@@ -180,7 +180,7 @@ export default async function HomePage() {
                         <div className="flex flex-col items-center gap-1 w-full">
                           <div className="w-full text-gray-600 text-xs font-bold text-center py-1 px-2 border-b border-gray-300">
                             칭호
-                         div>
+                          </div>
                           <Title title={title} />
                         </div>
                       )}
