@@ -1,5 +1,3 @@
-import type { RedisClientType } from "redis";
-
 let memory = new Map<string, string>();
 
 // Minimal REST-based Upstash client

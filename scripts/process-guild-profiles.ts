@@ -100,7 +100,7 @@ async function checkSupabaseConnection() {
     console.log('✅ Supabase 연결 확인 완료');
     return true;
   } catch (error) {
-    console.error('❌ Supabase 환경변수 오류:', error.message);
+    console.error('❌ Supabase 환경변수 오류:', error instanceof Error ? error.message : String(error));
     return false;
   }
 }

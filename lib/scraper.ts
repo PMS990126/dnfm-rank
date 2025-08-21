@@ -145,7 +145,7 @@ export async function scrapeProfileByUserId(userId: string, opts?: { debug?: boo
     return { url, exists: true, profile, usedFallback: true };
   } catch (error) {
     if (opts?.debug) {
-      console.error('  ❌ 스크래핑 실패:', error.message);
+      console.error('  ❌ 스크래핑 실패:', error instanceof Error ? error.message : String(error));
     }
     return { url, exists: false, usedFallback: true };
   }

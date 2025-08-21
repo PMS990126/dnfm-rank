@@ -206,7 +206,7 @@ export async function scanProfileRangeDebug(startId: number, count: number, guil
 				}
 			}
 		} catch {}
-		details.push({ id, exists, matched: isMatched, saved: isMatched, guild, nickname, usedFallback, ms: Date.now() - s0 });
+		details.push({ id, exists, matched: isMatched, guild, nickname, usedFallback, ms: Date.now() - s0 });
 	}
 	return { startId, scanned: count, matched, totalSec: Math.round((Date.now() - t0) / 100) / 10, details };
 }

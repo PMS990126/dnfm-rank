@@ -52,7 +52,7 @@ async function updateMemberProfile(member: Author): Promise<{ success: boolean; 
     
     const profileData = await scrapeProfileByUserId(member.user_id, { debug: false });
     
-    if (!profileData) {
+    if (!profileData || !profileData.exists || !profileData.profile) {
       console.log(`❌ ${member.nickname}: 프로필 스크래핑 실패`);
       return { success: false };
     }
@@ -61,9 +61,9 @@ async function updateMemberProfile(member: Author): Promise<{ success: boolean; 
     const { error } = await db
       .from('authors')
       .update({
-        level: profileData.level,
-        combat_power: profileData.combatPower,
-        adventure_level: profileData.adventureLevel,
+        level: profileData.profile.level,
+        combat_power: profileData.profile.combatPower,
+        adventure_level: profileData.profile.adventureLevel,
         updated_at: new Date().toISOString()
       })
       .eq('author_key', member.author_key);
@@ -73,12 +73,12 @@ async function updateMemberProfile(member: Author): Promise<{ success: boolean; 
       return { success: false };
     }
 
-    const powerChange = profileData.combatPower - member.combat_power;
+    const powerChange = profileData.profile.combatPower - member.combat_power;
     const changeIcon = powerChange > 0 ? '📈' : powerChange < 0 ? '📉' : '➖';
     
-    console.log(`✅ ${member.nickname}: ${member.combat_power.toLocaleString()} → ${profileData.combatPower.toLocaleString()} ${changeIcon} ${powerChange > 0 ? '+' : ''}${powerChange.toLocaleString()}`);
+    console.log(`✅ ${member.nickname}: ${member.combat_power.toLocaleString()} → ${profileData.profile.combatPower.toLocaleString()} ${changeIcon} ${powerChange > 0 ? '+' : ''}${powerChange.toLocaleString()}`);
     
-    return { success: true, newCombatPower: profileData.combatPower };
+    return { success: true, newCombatPower: profileData.profile.combatPower };
   } catch (error) {
     console.error(`❌ ${member.nickname}: 업데이트 중 오류:`, error);
     return { success: false };
