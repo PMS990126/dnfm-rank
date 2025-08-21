@@ -7,13 +7,6 @@ interface BadgeProps {
   badge: BadgeType;
 }
 
-const rarityColors = {
-  common: 'border-gray-400 bg-gray-100',
-  rare: 'border-blue-400 bg-blue-100',
-  epic: 'border-purple-400 bg-purple-100',
-  legendary: 'border-yellow-400 bg-yellow-100'
-};
-
 const rarityTextColors = {
   common: 'text-gray-600',
   rare: 'text-blue-600',
@@ -27,7 +20,7 @@ export default function Badge({ badge }: BadgeProps) {
   return (
     <div className="relative inline-block">
       <div
-        className={`w-8 h-8 rounded-full border-2 cursor-pointer transition-all duration-200 hover:scale-110 ${rarityColors[badge.rarity]} flex items-center justify-center overflow-hidden`}
+        className="w-8 h-8 rounded-full cursor-pointer transition-all duration-200 hover:scale-110 flex items-center justify-center overflow-hidden bg-white shadow-sm"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         onClick={() => setShowTooltip(!showTooltip)}
