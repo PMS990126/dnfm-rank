@@ -15,11 +15,10 @@ async function getUserTitlesAndBadges() {
     // 칭호 데이터 가져오기
     const { data: titles, error: titlesError } = await db
       .from('user_titles')
-      .select('author_key, title');
+      .select('author_key, title, rarity');
     
     if (titlesError) {
-      console.error('Error fetching titles:', titlesError);
-      return { titleMap: new Map(), badgeMap: new Map() };
+      console.error('칭호 데이터 조회 실패:', titlesError);
     }
     
     // 뱃지 데이터 가져오기
@@ -47,7 +46,7 @@ async function getUserTitlesAndBadges() {
     // 데이터 매핑
     const titleMap = new Map();
     titles?.forEach(title => {
-      titleMap.set(title.author_key, title.title);
+      titleMap.set(title.author_key, { title: title.title, rarity: title.rarity });
     });
     
     const badgeMap = new Map();
@@ -128,12 +127,13 @@ export default async function HomePage() {
           <div className="grid gap-3 sm:gap-4">
             {data.members.map((m: any, index: number) => {
               const authorKey = `${m.server}:${m.nickname}`.toLowerCase();
-              const title = titleMap.get(authorKey);
+              const titleData = titleMap.get(authorKey);
               const badges = badgeMap.get(authorKey) || [];
               
               console.log(`${m.nickname} 매칭 확인:`, {
                 authorKey,
-                title,
+                title: titleData?.title,
+                rarity: titleData?.rarity,
                 badgeCount: badges.length,
                 hasTitle: titleMap.has(authorKey),
                 hasBadges: badgeMap.has(authorKey)
@@ -176,12 +176,12 @@ export default async function HomePage() {
                         )}
                       </div>
                       {/* 칭호를 아바타 밑으로 이동 */}
-                      {title && (
+                      {titleData && (
                         <div className="flex flex-col items-center gap-1 w-full">
                           <div className="w-full text-black text-xs font-bold text-center py-1 px-2">
                             칭호
                           </div>
-                          <Title title={title} />
+                          <Title title={titleData.title} rarity={titleData.rarity} />
                         </div>
                       )}
                     </div>
