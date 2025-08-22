@@ -8,8 +8,8 @@ import { join } from 'path';
 // .env.local 파일 로드
 config({ path: '.env.local' });
 
-import { scrapeProfileByUserId } from '@/lib/scraper';
-import { getDb } from '@/lib/db';
+import { scrapeProfileByUserId } from '../lib/scraper';
+import { getDb } from '../lib/db';
 
 function authorKey(server: string, nickname: string) {
   return `${server}:${nickname}`.toLowerCase();
@@ -39,6 +39,26 @@ function parseProfileUrls(filePath: string): string[] {
   } catch (error) {
     console.error('파일 읽기 오류:', error);
     return [];
+  }
+}
+
+async function getExistingUserIds(): Promise<Set<string>> {
+  const db = getDb();
+  try {
+    const { data, error } = await db
+      .from('authors')
+      .select('user_id')
+      .not('user_id', 'is', null);
+    
+    if (error) {
+      console.error('기존 사용자 ID 조회 오류:', error);
+      return new Set();
+    }
+    
+    return new Set(data?.map(row => row.user_id).filter(Boolean) || []);
+  } catch (error) {
+    console.error('기존 사용자 ID 조회 중 오류:', error);
+    return new Set();
   }
 }
 
@@ -74,6 +94,7 @@ async function processProfile(userId: string, index: number, total: number): Pro
       adventure_name: profile.adventureName || null,
       adventure_level: profile.adventureLevel || null,
       avatar_url: profile.avatarUrl || null,
+      user_id: userId, // user_id 추가
       updated_at: new Date().toISOString(),
     });
     
@@ -122,14 +143,30 @@ async function main() {
     process.exit(1);
   }
   
-  console.log(`📋 총 ${userIds.length}개의 프로필을 처리합니다.\n`);
+  console.log(`📋 총 ${userIds.length}개의 프로필 URL을 확인합니다.\n`);
+  
+  // 기존에 등록된 사용자 ID 조회
+  console.log('🔍 기존 등록된 사용자 확인 중...');
+  const existingUserIds = await getExistingUserIds();
+  console.log(`📊 기존 등록된 사용자: ${existingUserIds.size}명\n`);
+  
+  // 새로 등록할 사용자만 필터링
+  const newUserIds = userIds.filter(userId => !existingUserIds.has(userId));
+  
+  if (newUserIds.length === 0) {
+    console.log('🎉 모든 사용자가 이미 등록되어 있습니다!');
+    return;
+  }
+  
+  console.log(`🆕 새로 등록할 사용자: ${newUserIds.length}명`);
+  console.log(`⏭️  건너뛸 사용자: ${userIds.length - newUserIds.length}명\n`);
   
   let successCount = 0;
   let failureCount = 0;
   
-  for (let i = 0; i < userIds.length; i++) {
-    const userId = userIds[i];
-    const success = await processProfile(userId, i, userIds.length);
+  for (let i = 0; i < newUserIds.length; i++) {
+    const userId = newUserIds[i];
+    const success = await processProfile(userId, i, newUserIds.length);
     
     if (success) {
       successCount++;
@@ -138,7 +175,7 @@ async function main() {
     }
     
     // 요청 간 간격 (API 부하 방지)
-    if (i < userIds.length - 1) {
+    if (i < newUserIds.length - 1) {
       await new Promise(resolve => setTimeout(resolve, 2000)); // 2초로 증가
     }
   }
@@ -146,10 +183,11 @@ async function main() {
   console.log('\n📊 처리 결과:');
   console.log(`✅ 성공: ${successCount}개`);
   console.log(`❌ 실패: ${failureCount}개`);
-  console.log(`📈 성공률: ${((successCount / userIds.length) * 100).toFixed(1)}%`);
+  console.log(`📈 성공률: ${((successCount / newUserIds.length) * 100).toFixed(1)}%`);
+  console.log(`⏭️  건너뛴 기존 사용자: ${userIds.length - newUserIds.length}개`);
   
   if (successCount > 0) {
-    console.log('\n🎉 프로필 등록이 완료되었습니다!');
+    console.log('\n🎉 새 프로필 등록이 완료되었습니다!');
   }
 }
 

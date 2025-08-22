@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "next lint || echo 'skip'",
     "process-profiles": "npx tsx scripts/process-guild-profiles.ts",
+    "manage-urls": "npx tsx scripts/manage-profile-urls.ts",
     "daily-update": "npx tsx scripts/daily-update.ts",
     "test-profile": "npx tsx scripts/test-single-profile.ts",
     "test-browser": "npx tsx scripts/test-browser.ts",

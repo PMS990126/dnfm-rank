@@ -20,7 +20,7 @@ export default function Badge({ badge }: BadgeProps) {
   return (
     <div className="relative inline-block">
       <div
-        className="w-8 h-8 rounded-full cursor-pointer transition-all duration-200 hover:scale-110 flex items-center justify-center overflow-hidden bg-white shadow-sm"
+        className="w-8 h-8 rounded-full cursor-pointer transition-all duration-200 hover:scale-110 flex items-center justify-center overflow-hidden"
         onMouseEnter={() => setShowTooltip(true)}
         onMouseLeave={() => setShowTooltip(false)}
         onClick={() => setShowTooltip(!showTooltip)}
@@ -28,7 +28,7 @@ export default function Badge({ badge }: BadgeProps) {
         {/* 뱃지 이미지 또는 첫 글자 */}
         {badge.iconUrl ? (
           <div
-            className="w-6 h-6 rounded-full bg-center bg-cover bg-no-repeat"
+            className="w-8 h-8 rounded-full bg-center bg-cover bg-no-repeat"
             style={{
               backgroundImage: `url("${badge.iconUrl}")`
             }}
