@@ -7,13 +7,6 @@ interface BadgeProps {
   badge: BadgeType;
 }
 
-const rarityTextColors = {
-  common: 'text-gray-600',
-  rare: 'text-blue-600',
-  epic: 'text-purple-600',
-  legendary: 'text-yellow-600'
-};
-
 export default function Badge({ badge }: BadgeProps) {
   const [showTooltip, setShowTooltip] = useState(false);
 
@@ -35,7 +28,7 @@ export default function Badge({ badge }: BadgeProps) {
             title={badge.name}
           />
         ) : (
-          <span className={`text-xs font-bold ${rarityTextColors[badge.rarity]}`}>
+          <span className="text-xs font-bold text-gray-600">
             {badge.name?.charAt(0) || '?'}
           </span>
         )}

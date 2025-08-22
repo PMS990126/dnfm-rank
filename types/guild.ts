@@ -3,7 +3,6 @@ export type Badge = {
   name: string;
   description: string;
   iconUrl: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
   earnedAt: string;
   earnedCondition: string;
 };

@@ -33,8 +33,7 @@ async function getUserTitlesAndBadges() {
           id,
           name,
           description,
-          icon_url,
-          rarity
+          icon_url
         )
       `);
     
@@ -66,7 +65,6 @@ async function getUserTitlesAndBadges() {
         name: (badge.badge_definitions as any)?.name,
         description: (badge.badge_definitions as any)?.description,
         iconUrl: (badge.badge_definitions as any)?.icon_url,
-        rarity: (badge.badge_definitions as any)?.rarity,
         earnedAt: badge.earned_at,
         earnedCondition: badge.earned_condition
       });
@@ -136,7 +134,7 @@ export default async function HomePage() {
                 rarity: titleData?.rarity,
                 badgeCount: badges.length,
                 hasTitle: titleMap.has(authorKey),
-                hasBadges: badgeMap.has(authorKey)
+                titleData: titleData
               });
               
               return (
