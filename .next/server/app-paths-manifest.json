@@ -1,18 +1,18 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
   "/admin/titles-badges/page": "app/admin/titles-badges/page.js",
-  "/api/badges/route": "app/api/badges/route.js",
-  "/api/cron/daily-update/route": "app/api/cron/daily-update/route.js",
   "/api/badge-definitions/route": "app/api/badge-definitions/route.js",
+  "/api/cron/daily-update/route": "app/api/cron/daily-update/route.js",
   "/api/debug/list/route": "app/api/debug/list/route.js",
-  "/api/titles/route": "app/api/titles/route.js",
+  "/api/badges/route": "app/api/badges/route.js",
   "/guild/[guild]/ranking/page": "app/guild/[guild]/ranking/page.js",
-  "/user/[nickname]/page": "app/user/[nickname]/page.js",
+  "/api/titles/route": "app/api/titles/route.js",
   "/page": "app/page.js",
   "/post/[postId]/page": "app/post/[postId]/page.js",
-  "/api/admin/index/scanProfiles/route": "app/api/admin/index/scanProfiles/route.js",
+  "/user/[nickname]/page": "app/user/[nickname]/page.js",
   "/icon.png/route": "app/icon.png/route.js",
+  "/api/admin/index/scanProfiles/route": "app/api/admin/index/scanProfiles/route.js",
+  "/api/kakao/skill/route": "app/api/kakao/skill/route.js",
   "/api/guild/[guild]/ranking/route": "app/api/guild/[guild]/ranking/route.js",
-  "/api/post/[postId]/route": "app/api/post/[postId]/route.js",
-  "/api/kakao/skill/route": "app/api/kakao/skill/route.js"
+  "/api/post/[postId]/route": "app/api/post/[postId]/route.js"
 }

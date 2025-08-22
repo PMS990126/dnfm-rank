@@ -16,7 +16,6 @@ interface BadgeDefinition {
   name: string;
   description: string;
   icon_url: string;
-  rarity: 'common' | 'rare' | 'epic' | 'legendary';
 }
 
 export default function TitlesBadgesAdminPage() {
@@ -134,7 +133,7 @@ export default function TitlesBadgesAdminPage() {
   };
 
   const handleRemoveBadge = async (authorKey: string, badgeId: number) => {
-    if (!confirm('이 뱃지를 제거하시겠습니까?')) return;
+    if (!confirm('정말로 이 뱃지를 제거하시겠습니까?')) return;
     
     setLoading(true);
     try {
@@ -145,21 +144,14 @@ export default function TitlesBadgesAdminPage() {
       if (response.ok) {
         await loadUsersData();
         alert('뱃지가 제거되었습니다.');
+      } else {
+        alert('뱃지 제거에 실패했습니다.');
       }
     } catch (error) {
       console.error('Failed to remove badge:', error);
       alert('뱃지 제거에 실패했습니다.');
     }
     setLoading(false);
-  };
-
-  const getRarityColor = (rarity: string) => {
-    switch (rarity) {
-      case 'legendary': return 'text-yellow-500';
-      case 'epic': return 'text-purple-500';
-      case 'rare': return 'text-blue-500';
-      default: return 'text-gray-500';
-    }
   };
 
   return (
@@ -225,7 +217,7 @@ export default function TitlesBadgesAdminPage() {
               <option value="">뱃지 선택</option>
               {badgeDefinitions.map(badge => (
                 <option key={badge.id} value={badge.id.toString()}>
-                  {badge.name} ({badge.rarity})
+                  {badge.name}
                 </option>
               ))}
             </select>
@@ -274,7 +266,6 @@ export default function TitlesBadgesAdminPage() {
                       key={badge.id} 
                       className="flex items-center gap-2 bg-slate-700 px-3 py-1 rounded text-sm"
                     >
-                      <span className={getRarityColor(badge.rarity)}>●</span>
                       <span>{badge.name}</span>
                       <button
                         onClick={() => handleRemoveBadge(user.authorKey, badge.id)}
