@@ -4,6 +4,15 @@ ADD COLUMN IF NOT EXISTS previous_combat_power int,
 ADD COLUMN IF NOT EXISTS combat_power_delta int,
 ADD COLUMN IF NOT EXISTS last_checked_at timestamptz;
 
+-- Add user_id column to authors table for profile updates
+ALTER TABLE authors ADD COLUMN IF NOT EXISTS user_id text;
+
+-- Create index for user_id lookups
+CREATE INDEX IF NOT EXISTS authors_user_id_idx ON authors(user_id);
+
+-- Update existing records if needed (example)
+-- UPDATE authors SET user_id = 'default_user_id' WHERE user_id IS NULL;
+
 -- 일별 항마력 히스토리 테이블 (기존 author_stats_daily 개선)
 DROP TABLE IF EXISTS public.author_stats_daily;
 CREATE TABLE public.combat_power_history (
