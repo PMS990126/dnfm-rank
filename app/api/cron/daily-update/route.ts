@@ -155,7 +155,7 @@ export async function GET(request: NextRequest) {
       
       // 서버 부하 방지를 위한 지연
       if (i > 0) {
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 5000)); // 5초로 증가
       }
       
       const result = await updateMemberProfile(member);
@@ -165,6 +165,12 @@ export async function GET(request: NextRequest) {
       } else {
         failCount++;
         failedMembers.push({ nickname: member.nickname, error: result.error || '알 수 없는 오류' });
+        
+        // 스크래핑 실패 시 추가 대기 시간
+        if (result.error && result.error.includes('스크래핑 실패')) {
+          console.log(`  ⏳ 스크래핑 실패로 인한 추가 대기 (10초)...`);
+          await new Promise(resolve => setTimeout(resolve, 10000)); // 10초 추가 대기
+        }
       }
     }
 

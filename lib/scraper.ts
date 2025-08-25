@@ -20,6 +20,17 @@ function fixMojibake(input?: string): string | undefined {
 }
 
 export async function fetchHtml(url: string): Promise<string> {
+  // 다양한 User-Agent를 순환하여 사용
+  const userAgents = [
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/119.0',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+  ];
+  
+  const randomUserAgent = userAgents[Math.floor(Math.random() * userAgents.length)];
+  
   try {
     // 환경변수로 우회 방법 선택
     const bypassMethod = process.env.SCRAPING_BYPASS_METHOD || 'default';
@@ -29,7 +40,7 @@ export async function fetchHtml(url: string): Promise<string> {
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+          'User-Agent': randomUserAgent,
         },
         signal: AbortSignal.timeout(15000),
       });
@@ -45,25 +56,25 @@ export async function fetchHtml(url: string): Promise<string> {
     const response = await fetch(url, {
       method: 'GET',
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'User-Agent': randomUserAgent,
         'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
         'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
         'Accept-Encoding': 'gzip, deflate, br',
-        'Cache-Control': 'no-cache',
-        'Pragma': 'no-cache',
+        'Cache-Control': 'max-age=0',
         'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
         'Sec-Ch-Ua-Mobile': '?0',
         'Sec-Ch-Ua-Platform': '"Windows"',
         'Sec-Fetch-Dest': 'document',
         'Sec-Fetch-Mode': 'navigate',
-        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-Site': 'cross-site',
         'Sec-Fetch-User': '?1',
         'Upgrade-Insecure-Requests': '1',
-        'Referer': 'https://dnfm.nexon.com/',
+        'Referer': 'https://www.google.com/',
         'DNT': '1',
         'Connection': 'keep-alive',
+        'X-Requested-With': 'XMLHttpRequest',
       },
-      signal: AbortSignal.timeout(20000), // 20초 타임아웃
+      signal: AbortSignal.timeout(25000), // 25초 타임아웃
     });
 
     if (!response.ok) {
@@ -77,15 +88,18 @@ export async function fetchHtml(url: string): Promise<string> {
     try {
       console.log(`  🔄 첫 번째 시도 실패, 간단한 헤더로 재시도: ${error instanceof Error ? error.message : String(error)}`);
       
+      // 2초 대기 후 재시도
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      
       const response = await fetch(url, {
         method: 'GET',
         headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'User-Agent': randomUserAgent,
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
           'Accept-Language': 'ko-KR,ko;q=0.9,en;q=0.8',
-          'Referer': 'https://dnfm.nexon.com/',
+          'Referer': 'https://www.google.com/',
         },
-        signal: AbortSignal.timeout(15000),
+        signal: AbortSignal.timeout(20000),
       });
 
       if (!response.ok) {
@@ -95,7 +109,30 @@ export async function fetchHtml(url: string): Promise<string> {
       const html = await response.text();
       return html;
     } catch (retryError) {
-      throw new Error(`재시도 실패: ${retryError instanceof Error ? retryError.message : String(retryError)}`);
+      // 두 번째 시도도 실패 시 최소한의 헤더로 마지막 시도
+      try {
+        console.log(`  🔄 두 번째 시도 실패, 최소 헤더로 마지막 시도: ${retryError instanceof Error ? retryError.message : String(retryError)}`);
+        
+        // 3초 대기 후 마지막 시도
+        await new Promise(resolve => setTimeout(resolve, 3000));
+        
+        const response = await fetch(url, {
+          method: 'GET',
+          headers: {
+            'User-Agent': randomUserAgent,
+          },
+          signal: AbortSignal.timeout(15000),
+        });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
+        const html = await response.text();
+        return html;
+      } catch (finalError) {
+        throw new Error(`모든 시도 실패: ${finalError instanceof Error ? finalError.message : String(finalError)}`);
+      }
     }
   }
 }
