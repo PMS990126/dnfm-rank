@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { scrapeProfileByUserId } from '@/lib/scraper';
 
+// 동적 렌더링 강제 (빌드 시점 실행 방지)
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 interface Author {
   author_key: string;
   user_id: string;
@@ -93,6 +97,11 @@ async function calculateCombatPowerDeltas() {
 
 export async function GET(request: NextRequest) {
   try {
+    // 빌드 시점 체크 (빌드 시에는 즉시 반환)
+    if (process.env.NODE_ENV === 'production' && !request) {
+      return NextResponse.json({ message: 'Cron job endpoint' });
+    }
+
     const startTime = new Date();
     console.log('🚀 일일 프로필 업데이트 시작:', startTime.toLocaleString());
     console.log('🌍 환경변수 확인:', {

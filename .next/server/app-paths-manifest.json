@@ -1,6 +1,22 @@
 {
-  "/api/admin/bulk-update-user-ids/route": "app/api/admin/bulk-update-user-ids/route.js",
+  "/_not-found/page": "app/_not-found/page.js",
   "/admin/manual-update/page": "app/admin/manual-update/page.js",
+  "/admin/titles-badges/page": "app/admin/titles-badges/page.js",
+  "/api/badges/route": "app/api/badges/route.js",
+  "/api/badge-definitions/route": "app/api/badge-definitions/route.js",
+  "/api/debug/list/route": "app/api/debug/list/route.js",
+  "/api/titles/route": "app/api/titles/route.js",
+  "/guild/[guild]/ranking/page": "app/guild/[guild]/ranking/page.js",
+  "/icon.png/route": "app/icon.png/route.js",
+  "/page": "app/page.js",
+  "/user/[nickname]/page": "app/user/[nickname]/page.js",
+  "/post/[postId]/page": "app/post/[postId]/page.js",
+  "/api/admin/index/scanProfiles/route": "app/api/admin/index/scanProfiles/route.js",
+  "/api/admin/auto-find-user-ids/route": "app/api/admin/auto-find-user-ids/route.js",
+  "/api/admin/bulk-update-user-ids/route": "app/api/admin/bulk-update-user-ids/route.js",
+  "/api/admin/manual-update/route": "app/api/admin/manual-update/route.js",
   "/api/cron/daily-update/route": "app/api/cron/daily-update/route.js",
-  "/page": "app/page.js"
+  "/api/guild/[guild]/ranking/route": "app/api/guild/[guild]/ranking/route.js",
+  "/api/post/[postId]/route": "app/api/post/[postId]/route.js",
+  "/api/kakao/skill/route": "app/api/kakao/skill/route.js"
 }

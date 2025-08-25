@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getDb } from '@/lib/db';
 import { scrapeProfileByUserId } from '@/lib/scraper';
 
+// 동적 렌더링 강제 (빌드 시점 실행 방지)
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 interface Author {
   author_key: string;
   user_id: string;

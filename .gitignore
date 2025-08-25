@@ -43,3 +43,7 @@ node_modules/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# TypeScript
+*.tsbuildinfo
+tsconfig.tsbuildinfo

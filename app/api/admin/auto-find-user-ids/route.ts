@@ -3,6 +3,10 @@ import { getDb } from '@/lib/db';
 import { fetchHtml } from '@/lib/scraper';
 import * as cheerio from 'cheerio';
 
+// 동적 렌더링 강제 (빌드 시점 실행 방지)
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 interface Author {
   author_key: string;
   server: string;
