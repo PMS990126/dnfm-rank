@@ -13,7 +13,8 @@
     "test-profile": "npx tsx scripts/test-single-profile.ts",
     "test-browser": "npx tsx scripts/test-browser.ts",
     "test-render": "npx tsx scripts/test-renderprofile.ts",
-    "fix-logo-bg": "npx tsx scripts/fix-logo-bg.ts"
+    "fix-logo-bg": "npx tsx scripts/fix-logo-bg.ts",
+    "deploy-guide": "node scripts/deploy-edge-function.js"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
