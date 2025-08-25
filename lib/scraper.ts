@@ -118,36 +118,31 @@ function isProfileInsufficient(p: Partial<PostProfile>) {
 
 export async function scrapeProfileByUserId(userId: string, opts?: { debug?: boolean }) {
   const url = `https://dnfm.nexon.com/Profile/User/${userId}`;
-  if (process.env.PLAYWRIGHT_ENABLE === "false") {
-    return { url, exists: false, usedFallback: false };
-  }
-  // Prefer DOM-evaluated structured data to avoid encoding issues
+  
   try {
-    const data = await renderProfileData(url);
+    const html = await fetchHtml(url);
+    const $ = cheerio.load(html);
+    
     if (opts?.debug) {
-      console.log('  🔍 추출 완료:', `${data.nickname || '(닉네임없음)'} - ${data.guild || '(길드없음)'}`);
+      console.log('  🔍 HTML 가져오기 완료, 프로필 파싱 시작...');
     }
-    const profile: PostProfile = {
-      nickname: data.nickname || "",
-      level: data.level || 0,
-      server: data.server || "",
-      job: data.job || "",
-      combatPower: data.combatPower || 0,
-      guild: data.guild || "",
-      adventureName: data.adventureName || undefined,
-      adventureLevel: data.adventureLevel || 0,
-      avatarUrl: data.avatarUrl || undefined,
-    };
-
+    
+    const profile = parseProfileFromDom($);
+    
+    if (opts?.debug) {
+      console.log('  🔍 추출 완료:', `${profile.nickname || '(닉네임없음)'} - ${profile.guild || '(길드없음)'}`);
+    }
+    
     if (isProfileInsufficient(profile)) {
-      return { url, exists: false, usedFallback: true };
+      return { url, exists: false, usedFallback: false };
     }
-    return { url, exists: true, profile, usedFallback: true };
+    
+    return { url, exists: true, profile, usedFallback: false };
   } catch (error) {
     if (opts?.debug) {
       console.error('  ❌ 스크래핑 실패:', error instanceof Error ? error.message : String(error));
     }
-    return { url, exists: false, usedFallback: true };
+    return { url, exists: false, usedFallback: false };
   }
 }
 
