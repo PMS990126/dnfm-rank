@@ -23,13 +23,26 @@ function fixMojibake(input?: string): string | undefined {
 export async function fetchHtml(url: string): Promise<string> {
   const res = await got(url, {
     headers: {
-      "user-agent": UA,
-      "accept-language": "ko-KR,ko;q=0.9,en;q=0.8",
-      referer: "https://dnfm.nexon.com/Community/Free",
-      accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+      "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+      "accept-encoding": "gzip, deflate, br",
+      "cache-control": "no-cache",
+      "pragma": "no-cache",
+      "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+      "sec-ch-ua-mobile": "?0",
+      "sec-ch-ua-platform": '"Windows"',
+      "sec-fetch-dest": "document",
+      "sec-fetch-mode": "navigate",
+      "sec-fetch-site": "none",
+      "sec-fetch-user": "?1",
+      "upgrade-insecure-requests": "1",
+      "referer": "https://dnfm.nexon.com/",
     },
-    timeout: { request: 8000 },
-    retry: { limit: 1 },
+    timeout: { request: 15000 },
+    retry: { limit: 2, methods: ['GET'] },
+    followRedirect: true,
+    decompress: true,
   });
   return res.body;
 }
@@ -120,27 +133,39 @@ export async function scrapeProfileByUserId(userId: string, opts?: { debug?: boo
   const url = `https://dnfm.nexon.com/Profile/User/${userId}`;
   
   try {
+    if (opts?.debug) {
+      console.log(`  🔍 ${userId} 프로필 스크래핑 시작: ${url}`);
+    }
+    
     const html = await fetchHtml(url);
     const $ = cheerio.load(html);
     
     if (opts?.debug) {
-      console.log('  🔍 HTML 가져오기 완료, 프로필 파싱 시작...');
+      console.log(`  🔍 HTML 가져오기 완료 (${html.length} bytes), 프로필 파싱 시작...`);
     }
     
     const profile = parseProfileFromDom($);
     
     if (opts?.debug) {
-      console.log('  🔍 추출 완료:', `${profile.nickname || '(닉네임없음)'} - ${profile.guild || '(길드없음)'}`);
+      console.log(`  🔍 추출 완료: ${profile.nickname || '(닉네임없음)'} - ${profile.guild || '(길드없음)'}`);
     }
     
     if (isProfileInsufficient(profile)) {
+      if (opts?.debug) {
+        console.log(`  ⚠️ 프로필 정보 부족: ${JSON.stringify(profile)}`);
+      }
       return { url, exists: false, usedFallback: false };
     }
     
     return { url, exists: true, profile, usedFallback: false };
   } catch (error) {
     if (opts?.debug) {
-      console.error('  ❌ 스크래핑 실패:', error instanceof Error ? error.message : String(error));
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      const errorStack = error instanceof Error ? error.stack : '';
+      console.error(`  ❌ 스크래핑 실패 (${userId}):`, errorMessage);
+      if (errorStack) {
+        console.error(`  📍 에러 스택:`, errorStack);
+      }
     }
     return { url, exists: false, usedFallback: false };
   }
