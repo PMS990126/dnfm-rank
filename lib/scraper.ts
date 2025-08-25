@@ -1,4 +1,3 @@
-import got from "got";
 import * as cheerio from "cheerio";
 import { PostData, PostProfile } from "@/types/post";
 import { renderHtml, renderProfileData } from "@/lib/browser";
@@ -21,30 +20,84 @@ function fixMojibake(input?: string): string | undefined {
 }
 
 export async function fetchHtml(url: string): Promise<string> {
-  const res = await got(url, {
-    headers: {
-      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-      "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-      "accept-language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
-      "accept-encoding": "gzip, deflate, br",
-      "cache-control": "no-cache",
-      "pragma": "no-cache",
-      "sec-ch-ua": '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-      "sec-ch-ua-mobile": "?0",
-      "sec-ch-ua-platform": '"Windows"',
-      "sec-fetch-dest": "document",
-      "sec-fetch-mode": "navigate",
-      "sec-fetch-site": "none",
-      "sec-fetch-user": "?1",
-      "upgrade-insecure-requests": "1",
-      "referer": "https://dnfm.nexon.com/",
-    },
-    timeout: { request: 15000 },
-    retry: { limit: 2, methods: ['GET'] },
-    followRedirect: true,
-    decompress: true,
-  });
-  return res.body;
+  try {
+    // 환경변수로 우회 방법 선택
+    const bypassMethod = process.env.SCRAPING_BYPASS_METHOD || 'default';
+    
+    if (bypassMethod === 'minimal') {
+      // 최소한의 헤더로 시도
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+      
+      return await response.text();
+    }
+    
+    // 기본 방법: 완전한 브라우저 헤더
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
+        'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Cache-Control': 'no-cache',
+        'Pragma': 'no-cache',
+        'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
+        'Sec-Ch-Ua-Mobile': '?0',
+        'Sec-Ch-Ua-Platform': '"Windows"',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Upgrade-Insecure-Requests': '1',
+        'Referer': 'https://dnfm.nexon.com/',
+        'DNT': '1',
+        'Connection': 'keep-alive',
+      },
+      signal: AbortSignal.timeout(20000), // 20초 타임아웃
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    const html = await response.text();
+    return html;
+  } catch (error) {
+    // 첫 번째 시도 실패 시 더 간단한 헤더로 재시도
+    try {
+      console.log(`  🔄 첫 번째 시도 실패, 간단한 헤더로 재시도: ${error instanceof Error ? error.message : String(error)}`);
+      
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+          'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+          'Accept-Language': 'ko-KR,ko;q=0.9,en;q=0.8',
+          'Referer': 'https://dnfm.nexon.com/',
+        },
+        signal: AbortSignal.timeout(15000),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
+      const html = await response.text();
+      return html;
+    } catch (retryError) {
+      throw new Error(`재시도 실패: ${retryError instanceof Error ? retryError.message : String(retryError)}`);
+    }
+  }
 }
 
 function findProfileContainer($: cheerio.CheerioAPI) {
